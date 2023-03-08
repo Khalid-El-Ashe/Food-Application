@@ -6,6 +6,8 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import com.bumptech.glide.Glide
 import com.example.easyfood.databinding.FragmentMealBottomSheetBinding
@@ -14,20 +16,22 @@ import com.example.easyfood.ui.activites.MealActivity
 import com.example.easyfood.ui.fragments.HomeFragment
 import com.example.easyfood.viewModel.HomeViewModel
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
+import dagger.hilt.android.AndroidEntryPoint
 
 private const val MEAL_ID = "mealId"
 
+@AndroidEntryPoint
 class MealBottomSheetFragment : BottomSheetDialogFragment() {
     private lateinit var binding: FragmentMealBottomSheetBinding
     private var mealId: String? = null
-    private lateinit var viewModel: HomeViewModel
+    private val viewModel by viewModels<HomeViewModel>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
             mealId = it.getString(MEAL_ID)
         }
-        viewModel = (activity as MainActivity).viewModel
+//        viewModel = (activity as MainActivity).viewModel
     }
 
     override fun onCreateView(

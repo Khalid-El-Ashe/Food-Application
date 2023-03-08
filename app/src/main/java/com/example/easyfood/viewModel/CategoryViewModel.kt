@@ -8,19 +8,23 @@ import com.example.easyfood.pojo.Category
 import com.example.easyfood.pojo.CategoryList
 import com.example.easyfood.pojo.MealsByCategory
 import com.example.easyfood.pojo.MealsByCategoryList
+import com.example.easyfood.retrofit.MealApi
 import com.example.easyfood.retrofit.RetrofitInstance
+import dagger.hilt.android.lifecycle.HiltViewModel
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import javax.inject.Inject
 
-class CategoryViewModel() : ViewModel() {
+@HiltViewModel
+class CategoryViewModel @Inject constructor (val mealApi: MealApi) : ViewModel() {
 
     private val categoryDetailsLiveData = MutableLiveData<List<MealsByCategory>>()
 
 
     // TODO: i need to get the random category and put it in the live data to update
     fun getMealsByCategory(categoryName: String) {
-        RetrofitInstance.api.getMealsByCategories(categoryName).enqueue(object : Callback<MealsByCategoryList>{
+        mealApi.getMealsByCategories(categoryName).enqueue(object : Callback<MealsByCategoryList>{
             override fun onResponse(
                 call: Call<MealsByCategoryList>,
                 response: Response<MealsByCategoryList>

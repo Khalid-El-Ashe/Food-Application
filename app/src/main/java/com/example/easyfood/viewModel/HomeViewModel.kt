@@ -1,21 +1,24 @@
 package com.example.easyfood.viewModel
 
-import android.app.Application
 import android.util.Log
-import android.widget.Toast
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.easyfood.db.MealDatabase
 import com.example.easyfood.pojo.*
+import com.example.easyfood.retrofit.MealApi
 import com.example.easyfood.retrofit.RetrofitInstance
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import javax.inject.Inject
 
-class HomeViewModel(private val mealDatabase: MealDatabase) : ViewModel() {
+@HiltViewModel
+class HomeViewModel @Inject constructor(private val mealDatabase: MealDatabase, private val mealApi: MealApi) : ViewModel() {
+//    private var mealesViewEvent = MutableLiveData<Meal>()
 
     private var randomMealLiveData = MutableLiveData<Meal>()
     private var popularItemsLiveData = MutableLiveData<List<MealsByCategory>>()
@@ -24,22 +27,34 @@ class HomeViewModel(private val mealDatabase: MealDatabase) : ViewModel() {
     private var bottomSheetMealLiveData = MutableLiveData<Meal>()
     private var searchMealLiveData = MutableLiveData<List<Meal>>()
 
-//    init {
-//        getRandomMeal()
+//    fun getMeals(){
+//        viewModelScope.launch {
+//            //todo: loading
+//
+//            try {
+//                //get data
+//                var favMealsLiveData = mealDatabase.mealDao().selectMeal()//
+//            }catch (ex:Exception){
+//                //todo: error handling
+//            }
+//
+//
+//        }
 //    }
 
-    private var saveInInternal: Meal ?= null
+
+    private var saveInInternal: Meal? = null
 
     // TODO: i need to create function to get the random meal from api
     fun getRandomMeal() {
 
-        saveInInternal?.let {randomMeal ->
+        saveInInternal?.let { randomMeal ->
             randomMealLiveData.postValue(randomMeal)
             return
         }
 
         // TODO: i need to call the Retrofit instance and i need to connected the api
-        RetrofitInstance.api.getRandomMeal().enqueue(object : Callback<MealList> {
+        mealApi.getRandomMeal().enqueue(object : Callback<MealList> {
             override fun onResponse(call: Call<MealList>, response: Response<MealList>) {
                 if (response.body() != null) {
 
@@ -62,7 +77,7 @@ class HomeViewModel(private val mealDatabase: MealDatabase) : ViewModel() {
     }
 
     fun getPopularItems() {
-        RetrofitInstance.api.getPopularItems("Seafood")
+        mealApi.getPopularItems("Seafood")
             .enqueue(object : Callback<MealsByCategoryList> {
                 override fun onResponse(
                     call: Call<MealsByCategoryList>,
@@ -83,9 +98,9 @@ class HomeViewModel(private val mealDatabase: MealDatabase) : ViewModel() {
     }
 
     fun getCategoryItems() {
-        RetrofitInstance.api.getCategoryItems().enqueue(object : Callback<CategoryList> {
+        mealApi.getCategoryItems().enqueue(object : Callback<CategoryList> {
             override fun onResponse(call: Call<CategoryList>, response: Response<CategoryList>) {
-                response.body()?.let {categoryList ->
+                response.body()?.let { categoryList ->
                     categoryItemsLiveData.postValue(categoryList.categories)
                 }
 //                if (response.body() != null) {
@@ -116,13 +131,13 @@ class HomeViewModel(private val mealDatabase: MealDatabase) : ViewModel() {
     }
 
     // TODO: i  need to make function to get the meal by id and view in bottom sheet
-    fun getMealById(id: String){
-        RetrofitInstance.api.getMealDetails(id).enqueue(object : Callback<MealList>{
+    fun getMealById(id: String) {
+        mealApi.getMealDetails(id).enqueue(object : Callback<MealList> {
             override fun onResponse(call: Call<MealList>, response: Response<MealList>) {
                 val meal = response.body()!!.meals.first()
 
                 // TODO: that is check if meal != null
-                meal?.let { meal->
+                meal?.let { meal ->
                     bottomSheetMealLiveData.postValue(meal)
                 }
             }
@@ -134,17 +149,17 @@ class HomeViewModel(private val mealDatabase: MealDatabase) : ViewModel() {
         })
     }
 
-    fun searchMeals(searchQuery: String){
-        RetrofitInstance.api.searchMeal(searchQuery).enqueue(object : Callback<MealList>{
+    fun searchMeals(searchQuery: String) {
+        mealApi.searchMeal(searchQuery).enqueue(object : Callback<MealList> {
             override fun onResponse(call: Call<MealList>, response: Response<MealList>) {
                 val mealsList = response.body()?.meals
-                mealsList?.let {meal ->
+                mealsList?.let { meal ->
                     searchMealLiveData.postValue(meal)
                 }
             }
 
             override fun onFailure(call: Call<MealList>, t: Throwable) {
-                Log.e("TAG", "onFailure: ${t.message.toString()}", )
+                Log.e("TAG", "onFailure: ${t.message.toString()}")
             }
 
         })
@@ -163,15 +178,15 @@ class HomeViewModel(private val mealDatabase: MealDatabase) : ViewModel() {
         return categoryItemsLiveData
     }
 
-    fun observeFavMealLiveData(): LiveData<List<Meal>>{
+    fun observeFavMealLiveData(): LiveData<List<Meal>> {
         return favMealsLiveData
     }
 
-    fun observeBottomSheetMealLiveData(): LiveData<Meal>{
+    fun observeBottomSheetMealLiveData(): LiveData<Meal> {
         return bottomSheetMealLiveData
     }
 
-    fun observeSearchLiveData(): LiveData<List<Meal>>{
+    fun observeSearchLiveData(): LiveData<List<Meal>> {
         return searchMealLiveData
     }
 }

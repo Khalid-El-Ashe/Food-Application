@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -23,10 +24,12 @@ import com.example.easyfood.ui.activites.MainActivity
 import com.example.easyfood.ui.activites.MealActivity
 import com.example.easyfood.ui.fragments.bottomSheet.MealBottomSheetFragment
 import com.example.easyfood.viewModel.HomeViewModel
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class HomeFragment : Fragment() {
     private lateinit var binding: FragmentHomeBinding
-    private lateinit var viewModel: HomeViewModel
+    private val viewModel by viewModels<HomeViewModel>()
     private lateinit var randomMeal: Meal
     private lateinit var popularAdapter: MostPopularAdapter
     private lateinit var categoryAdapter: CategoryAdapter
@@ -47,7 +50,7 @@ class HomeFragment : Fragment() {
         super.onCreate(savedInstanceState)
 
         // TODO: in here i need to get view model from main class i well make instance
-        viewModel = (activity as MainActivity).viewModel
+//        viewModel = (activity as MainActivity).viewModel
         popularAdapter = MostPopularAdapter()
         categoryAdapter = CategoryAdapter()
     }
@@ -68,8 +71,8 @@ class HomeFragment : Fragment() {
         categoryItemsRecyclerView()
 
         viewModel.getRandomMeal()
-        observeRandomMeal()
 
+        observeRandomMeal()
         onRandomMealClick()
         onPopularItemClick()
         onCategoryItemClick()

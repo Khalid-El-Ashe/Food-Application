@@ -5,6 +5,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.ItemTouchHelper
@@ -14,17 +16,19 @@ import com.example.easyfood.databinding.FragmentFavoritesBinding
 import com.example.easyfood.ui.activites.MainActivity
 import com.example.easyfood.viewModel.HomeViewModel
 import com.google.android.material.snackbar.Snackbar
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class FavoritesFragment : Fragment() {
     private lateinit var binding: FragmentFavoritesBinding
-    private lateinit var viewModel: HomeViewModel
+    private val viewModel by viewModels<HomeViewModel>()
     private lateinit var favAdapter: MealsAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         // TODO: i need to make instance of view model class from main class
-        viewModel = (activity as MainActivity).viewModel
+//        viewModel = (activity as MainActivity).viewModel
     }
 
     override fun onCreateView(
@@ -64,9 +68,9 @@ class FavoritesFragment : Fragment() {
 //                    view,
 //                    "Are you need to delete this item?",
 //                    Snackbar.LENGTH_LONG
-//                ).setAction("Undo", View.OnClickListener {
+//                ).setAction("Undo") {
 //                    viewModel.insertMeal(favAdapter.differ.currentList[position])
-//                }).show()
+//                }.show()
 
             }
         }

@@ -5,6 +5,7 @@ import androidx.room.*
 
 import com.example.easyfood.pojo.Meal
 
+
 @Dao
 interface MealDao {
 

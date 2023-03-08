@@ -1,23 +1,19 @@
 package com.example.easyfood.ui.activites
 
-import android.app.Activity
 import android.content.Intent
 import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
 import android.widget.Toast
+import androidx.activity.viewModels
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProvider
 import com.bumptech.glide.Glide
 import com.example.easyfood.R
 import com.example.easyfood.databinding.ActivityMealBinding
-import com.example.easyfood.db.MealDatabase
 import com.example.easyfood.pojo.Meal
 import com.example.easyfood.ui.fragments.HomeFragment
 import com.example.easyfood.viewModel.MealViewModel
-import com.example.easyfood.viewModel.MealViewModelFactory
-import com.google.android.material.snackbar.Snackbar
 
 class MealActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMealBinding
@@ -27,7 +23,7 @@ class MealActivity : AppCompatActivity() {
     private lateinit var youtubeLink: String
 
     // TODO: i need to make instance from the view model
-    private lateinit var mealMvvM: MealViewModel
+    private val mealMvvM by viewModels<MealViewModel>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -35,9 +31,9 @@ class MealActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         // TODO: i need to make instance from database
-        val mealDatabase = MealDatabase.getInstance(this)
-        val viewModelFactory = MealViewModelFactory(mealDatabase)
-        mealMvvM = ViewModelProvider(this, viewModelFactory).get(MealViewModel::class.java)
+//        val mealDatabase = MealDatabase.getInstance(this)
+//        val viewModelFactory = MealViewModelFactory(mealDatabase)
+//        mealMvvM = ViewModelProvider(this, viewModelFactory).get(MealViewModel::class.java)
         
 
         getMealInformationFromIntent()
